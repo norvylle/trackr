@@ -56,7 +56,7 @@ class SignUp extends Component{
                 <TextField
                   autoComplete="username"
                   name="username"
-                  variant="outlined"
+                  variant="standard"
                   required
                   fullWidth
                   id="username"
@@ -66,7 +66,7 @@ class SignUp extends Component{
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
+                  variant="standard"
                   required
                   fullWidth
                   id="email"
@@ -77,7 +77,7 @@ class SignUp extends Component{
               </Grid>
               <Grid item xs={12}>
                 <TextField
-                  variant="outlined"
+                  variant="standard"
                   required
                   fullWidth
                   name="password"
@@ -99,7 +99,7 @@ class SignUp extends Component{
             </Button>
             <Grid container justify="flex-end">
               <Grid item>
-                <Link href="/" variant="body2">
+                <Link href="/login" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

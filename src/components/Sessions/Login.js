@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -39,7 +40,23 @@ const styles = theme => ({
 });
 
 class Login extends Component {
-  
+  constructor(props){
+    super(props)
+    this.state={
+      username: "",
+      password: ""
+    }
+  }
+
+  handleSubmit = () =>{
+    //change for auth
+    // if(this.state.username === "user"){
+      this.props.history.push("/");
+    // }else{
+    //   alert("Nope")
+    // }
+  }
+
   render(){
     const { classes } = this.props;
     return (
@@ -54,7 +71,7 @@ class Login extends Component {
           </Typography>
           <form className={classes.form} noValidate>
             <TextField
-              variant="outlined"
+              variant="standard"
               margin="normal"
               required
               fullWidth
@@ -62,9 +79,11 @@ class Login extends Component {
               label="Username"
               name="username"
               autoFocus
+              value={this.state.username}
+              onChange={e => this.setState({username: e.target.value})}
             />
             <TextField
-              variant="outlined"
+              variant="standard"
               margin="normal"
               required
               fullWidth
@@ -72,6 +91,8 @@ class Login extends Component {
               label="Password"
               type="password"
               id="password"
+              value={this.state.password}
+              onChange={e => this.setState({password: e.target.value})}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -79,11 +100,11 @@ class Login extends Component {
             />
             <Button
               type="button"
-              href="/home"
               fullWidth
               variant="contained"
               color="primary"
               className={classes.submit}
+              onClick={this.handleSubmit}
             >
               Sign In
             </Button>
