@@ -2,14 +2,19 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { DatePicker } from '@material-ui/pickers';
-import { TextField, Button, Paper, Typography } from "@material-ui/core";
+import { TextField, Button, Paper, Typography, Fab, Tooltip } from "@material-ui/core";
 import CreatableSelect from 'react-select/creatable';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 const tags = [ {label:'#hello', value: '#hello'}, {label: '#world', value: '#world'}]
 
 const styles = theme => ({
-  root: {
+  paper: {
     padding: theme.spacing(3, 2),
+    display: "flex",
+    flex: 1,
+    marginTop: theme.spacing(1),
   },
   container: {
     display: 'flex',
@@ -56,6 +61,15 @@ const styles = theme => ({
   },
   date: {
     color: "light gray"
+  },
+  paperLeftContainer: {
+    width: "80%"
+  },
+  paperRightContainer: {
+    width: "20%"
+  },
+  editDelete: {
+    marginRight: theme.spacing(1.5)
   }
 });
 
@@ -72,18 +86,21 @@ class Tracker extends Component{
   }
 
   handleSelect = (newValue) => {
+    if(newValue === null){
+      newValue = []
+    }
     this.setState({tags: newValue})
   };
 
   handleCreateOption = (label) => {
     if(label[0] !== "#"){
-      label = "#" + label
+      label = "#" + label.split(" ")[0]
     }
     this.setState({tags: [...this.state.tags, {label, value: label}]})
   }
 
   handleSubmit = () => {
-    if(this.state.tags.length > 0 && this.state.activity !== ""){
+    if(this.state.activity !== "" && this.state.tags.length > 0){
       this.setState({
         all: [
           ...this.state.all, 
@@ -95,9 +112,8 @@ class Tracker extends Component{
           } 
         ]
       }, this.resetState)
-      alert("Add Success")
     }else{
-      alert("Errors found")
+      alert("Please fill in missing fields");
     }
   }
 
@@ -108,6 +124,25 @@ class Tracker extends Component{
       tags: [],
       activity: ""
     })
+  }
+
+  handleEdit = (val, index) => {
+    this.setState({
+      date: val.date,
+      hours: val.hours,
+      tags: val.tags,
+      activity: val.activity
+    }, () => { 
+      this.state.all.splice(index,1) //delete action
+      this.forceUpdate()
+    })
+  }
+
+  handleDelete = (val, index) => {
+    if(window.confirm("Delete this activity?")){
+      this.state.all.splice(index,1) //delete action
+      this.forceUpdate()
+    }
   }
 
   render(){
@@ -161,22 +196,36 @@ class Tracker extends Component{
           </Button>
         </div>
         <div className={classes.rightContainer}>
-            <Typography variant="h3">
+            <Typography variant="h4">
               Activity List:
             </Typography>
             {
               this.state.all.map((val, index) => {
                 return(
-                  <Paper className={classes.root} key={index}>
-                    <Typography variant="h5" component="p">
-                      {val.activity+", "+val.hours+(val.hours > 1 ? " hrs" : " hr")}
-                    </Typography>
-                    <Typography component="p" className={classes.hashtags}>
-                      {val.tags.map(data => (data.value)).join(" ")}
-                    </Typography>
-                    <Typography variant="subtitle2">
-                      {val.date.toDateString()}
-                    </Typography>
+                  <Paper className={classes.paper} key={index}>
+                    <div className={classes.paperLeftContainer}>
+                      <Typography variant="h5" component="p">
+                        {val.activity+", "+val.hours+(val.hours > 1 ? " hrs" : " hr")}
+                      </Typography>
+                      <Typography component="p" className={classes.hashtags}>
+                        {val.tags.map(data => (data.value)).join(" ")}
+                      </Typography>
+                      <Typography variant="subtitle2">
+                        {val.date.toDateString()}
+                      </Typography>
+                    </div>
+                    <div className={classes.paperRightContainer}>
+                      <Tooltip title="edit" aria-label="edit">
+                        <Fab size="medium" aria-label="edit" className={classes.editDelete} onClick={() => this.handleEdit(val, index)}>
+                          <EditIcon/>
+                        </Fab>
+                      </Tooltip>
+                      <Tooltip title="delete" aria-label="delete">
+                        <Fab size="medium" aria-label="delete" color="secondary" className={classes.editDelete} onClick={() => this.handleDelete(val, index)}>
+                          <DeleteIcon/>
+                        </Fab>
+                      </Tooltip>
+                    </div>
                   </Paper>
                 )
               })
