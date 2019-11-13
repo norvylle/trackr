@@ -15,6 +15,8 @@ function App() {
             <Route exact={true} path="/login" component={Login}/>
             <Route exact={true} path="/create" component={Create}/>
             <Route exact={true} path="/" component={Home}/>
+            <Route exact={true} path="/activity" component={Home}/>
+            <Route exact={true} path="/report" component={Home}/>
           </div>
         </Router>
       </div>

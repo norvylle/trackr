@@ -7,6 +7,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Tracker from './Tracker';
+import List from './List';
+import { Link } from '@material-ui/core';
 
 const styles = theme => ({
   root: {
@@ -26,6 +28,13 @@ const styles = theme => ({
     flexGrow: 0.5,
     padding: theme.spacing(3),
   },
+  title: {
+    flexGrow: 0.9,
+    marginLeft: theme.spacing(2)
+  },
+  toolbars: {
+    marginRight: theme.spacing(2),
+  }
 });
 
 class Home extends Component{
@@ -43,15 +52,36 @@ class Home extends Component{
           className={classes.appBar}
         >
           <Toolbar>
-            <Typography variant="h6" noWrap>
+            <Typography variant="h5" noWrap className={classes.title}>
               Trackr
             </Typography>
+            <Link href="/" color="inherit">
+              <Typography variant="subtitle1" className={classes.toolbars}>
+                  Home
+              </Typography>
+            </Link>
+            <Link href="/activity" color="inherit">
+              <Typography variant="subtitle1" className={classes.toolbars}>
+                Activity
+              </Typography>
+            </Link>
+            <Link href="/report" color="inherit">
+              <Typography variant="subtitle1" className={classes.toolbars}>
+                Report
+              </Typography>
+            </Link>
+            <Link href="/login" color="inherit">
+              <Typography variant="subtitle1" className={classes.toolbars}>
+                Sign out
+              </Typography>
+            </Link>
           </Toolbar>
         </AppBar>
         <main className={classes.content}>
           <Router>
             <div className={classes.toolbar}>
               <Route exact={true} path="/" component={Tracker}/>
+              <Route exact={true} path="/activity" component={List}/>
             </div>
           </Router>
         </main>
