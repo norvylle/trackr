@@ -102,7 +102,7 @@ class Tracker extends Component{
   handleSubmit = () => {
     if(this.state.activity !== "" && this.state.tags.length > 0){
       insert({
-        link: "check_ins/", 
+        link: "check_ins/",
         data: {
           date: this.state.date.toDateString(),
           hours: parseFloat(this.state.hours),
@@ -114,7 +114,7 @@ class Tracker extends Component{
         this.resetState()
       })
     }else{
-      alert("Please fill in missing fields");
+      alert("Please fill in the missing fields.");
     }
   }
 
