@@ -1,5 +1,7 @@
 import * as firebase from 'firebase';
-import { combineReducers } from 'redux';
+import { combineReducers, createStore } from 'redux';
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
 // Firebase
 const firebaseConfig = require("./secrets");
 
@@ -73,4 +75,13 @@ function dispatcher(state, action){
   }
 }
 
-export const reducer = combineReducers({state: dispatcher});
+const persistConfig = {
+  key: 'root',
+  storage,
+}
+
+const rootReducer = combineReducers({state: dispatcher});
+
+export const reducer = persistReducer(persistConfig, rootReducer)
+export let store = createStore(reducer)
+export let persistor = persistStore(store)
