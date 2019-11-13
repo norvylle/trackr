@@ -98,15 +98,15 @@ class Tracker extends Component{
     if(label[0] !== "#"){
       label = "#" + label.split(" ")[0]
     }
-    this.setState({tags: [...this.state.tags, {label, value: label}]})
+    this.setState({tags: [{label, value: label}]})
   }
 
   handleSubmit = () => {
     if(this.state.activity !== "" && this.state.tags.length > 0){
       let clone = {
         date: this.state.date,
-        hours: this.state.hours,
-        tags: this.state.tags,
+        hours: parseFloat(this.state.hours),
+        tag: this.state.tags[0].value,
         activity: this.state.activity,
         username: "user" //change when users are added
       }
@@ -145,7 +145,7 @@ class Tracker extends Component{
     this.setState({
       date: val.date,
       hours: val.hours,
-      tags: val.tags,
+      tags: [{label: val.tag, value: val.tag}, null],
       activity: val.activity,
       editKey: val.key
     }, () => { 
@@ -193,7 +193,7 @@ class Tracker extends Component{
               shrink: true,
             }}
             margin="normal"
-            inputProps={{ min: "0.1", step: "0.1" }}
+            inputProps={{ min: "0.1", step: "0.1", max: "24" }}
             value={this.state.hours}
             onChange={e => this.setState({hours: e.target.value})}
           />
@@ -209,7 +209,7 @@ class Tracker extends Component{
             onChange={e => this.setState({activity: e.target.value})}
           />
           <CreatableSelect
-            isMulti
+            isClearable
             value={this.state.tags}
             onChange={this.handleSelect}
             options={tags}
@@ -233,7 +233,7 @@ class Tracker extends Component{
                         {val.activity+", "+val.hours+(val.hours > 1 ? " hrs" : " hr")}
                       </Typography>
                       <Typography component="p" className={classes.hashtags}>
-                        {val.tags.map(data => (data.value)).join(" ")}
+                        {val.tag}
                       </Typography>
                       <Typography variant="subtitle2" className={classes.date}>
                         {val.date}
