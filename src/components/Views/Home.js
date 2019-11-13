@@ -8,6 +8,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
 import Tracker from './Tracker';
 import List from './List';
+import Report from './Report';
 import { Link } from '@material-ui/core';
 
 const styles = theme => ({
@@ -82,6 +83,7 @@ class Home extends Component{
             <div className={classes.toolbar}>
               <Route exact={true} path="/" component={Tracker}/>
               <Route exact={true} path="/activity" component={List}/>
+              <Route exact={true} path="/report" component={Report}/>
             </div>
           </Router>
         </main>
