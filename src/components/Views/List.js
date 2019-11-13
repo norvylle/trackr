@@ -7,6 +7,9 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { update, remove, searchMulti, snapshotToArray} from '../../controller/';
 
 const styles = theme => ({
+  panel: {
+    width: "500px",
+  },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
@@ -96,26 +99,23 @@ class List extends Component{
 
   render(){
     const { classes } = this.props;
-    if(this.state.all === null){
-      return(
-        <div>
-          Loading...
-        </div>
-      )
-    }
-    if(Object.entries(this.state.all).length === 0 && this.state.all.constructor === Object){
-      return(
-        <div>
-          Empty.
-        </div>
-      )
-    }
+    // if(Object.entries(this.state.all).length === 0 && this.state.all.constructor === Object){
+    //   return(
+    //     <div>
+    //       Empty.
+    //     </div>
+    //   )
+    // }
     return(
       <div>
+        <Typography variant="h4" style={{ marginBottom: "2rem"}}>
+          Activity List
+        </Typography>
         {
+          this.state.all === null ? <div>Loading...</div> :
           Object.keys(this.state.all).map((key, index)=>{
             return(
-              <ExpansionPanel key={index}>
+              <ExpansionPanel key={index} className={classes.panel}>
                 <ExpansionPanelSummary>
                   <Typography>
                     {key}
@@ -131,7 +131,7 @@ class List extends Component{
                               {val.activity+", "+val.hours+(val.hours > 1 ? " hrs" : " hr")}
                             </Typography>
                             <Typography component="p" className={classes.hashtags}>
-                              {val.tags.map(data => (data.value)).join(" ")}
+                              {val.tag}
                             </Typography>
                             <Typography variant="caption" className={classes.date}>
                               {val.date}
