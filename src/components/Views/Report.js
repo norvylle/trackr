@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { searchMulti, snapshotToArray } from '../../controller/';
 import { TagCloud } from "react-tagcloud";
 import { Tooltip, Typography } from "@material-ui/core";
+import { connect } from 'react-redux';
 
 function cloudTag(array){
   let obj = {}
@@ -37,7 +38,7 @@ const styles = {
   display: 'inline-block',
 }
 
-export default class Report extends Component {
+class Report extends Component {
   constructor(props){
     super(props)
     this.state={
@@ -49,7 +50,7 @@ export default class Report extends Component {
     searchMulti({
       link: "check_ins/",
       child: "username",
-      search: "user"
+      search: this.props.state.user.username
     }).on("value",function(snapshot){
       this.setState({all: cloudTag(snapshotToArray(snapshot))})
     }.bind(this))
@@ -75,3 +76,11 @@ export default class Report extends Component {
     )
   }
 }
+
+const mapStateToProps = state => {
+  return state
+}
+
+const ReportPage = connect(mapStateToProps)(Report)
+
+export default ReportPage;
