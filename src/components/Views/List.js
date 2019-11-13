@@ -1,15 +1,12 @@
 import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Typography, Tooltip, Fab } from "@material-ui/core";
+import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Typography, Tooltip, Fab, Modal } from "@material-ui/core";
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { update, remove, searchMulti, snapshotToArray} from '../../controller/';
 
 const styles = theme => ({
-  root: {
-    width: '100%',
-  },
   heading: {
     fontSize: theme.typography.pxToRem(15),
     fontWeight: theme.typography.fontWeightRegular,
@@ -24,21 +21,32 @@ const styles = theme => ({
     flex: 1,
     marginTop: theme.spacing(1),
   },
+  modalPaper: {
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
   hashtags: {
     color: "blue"
   },
   date: {
-    color: "light gray"
+    color: "gray"
   },
   paperLeftContainer: {
-    width: "80%"
+    width: "70%"
   },
   paperRightContainer: {
-    width: "20%"
+    width: "30%"
   },
   editDelete: {
     marginRight: theme.spacing(1.5)
-  }
+  },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 })
 
 function groupByDate(array){
@@ -56,7 +64,8 @@ class List extends Component{
   constructor(props){
     super(props)
     this.state={
-      all: null
+      all: null,
+      open: false
     }
   }
 
@@ -71,7 +80,11 @@ class List extends Component{
   }
 
   handleEdit = (val) => {
+    this.setState({open: true})
+  }
 
+  handleClose = () => {
+    this.setState({open: false})
   }
 
   handleDelete = (val) => {
@@ -98,7 +111,7 @@ class List extends Component{
       )
     }
     return(
-      <div className={classes.root}>
+      <div>
         {
           Object.keys(this.state.all).map((key, index)=>{
             return(
@@ -114,24 +127,24 @@ class List extends Component{
                       return(
                         <Paper className={classes.paper} key={index}>
                           <div className={classes.paperLeftContainer}>
-                            <Typography variant="h5" component="p">
+                            <Typography variant="subtitle1" component="p">
                               {val.activity+", "+val.hours+(val.hours > 1 ? " hrs" : " hr")}
                             </Typography>
                             <Typography component="p" className={classes.hashtags}>
                               {val.tags.map(data => (data.value)).join(" ")}
                             </Typography>
-                            <Typography variant="subtitle2">
+                            <Typography variant="caption" className={classes.date}>
                               {val.date}
                             </Typography>
                           </div>
                           <div className={classes.paperRightContainer}>
                             <Tooltip title="edit" aria-label="edit">
-                              <Fab size="medium" aria-label="edit" className={classes.editDelete} onClick={() => this.handleEdit(val)}>
+                              <Fab size="small" aria-label="edit" className={classes.editDelete} onClick={() => this.handleEdit(val)}>
                                 <EditIcon/>
                               </Fab>
                             </Tooltip>
                             <Tooltip title="delete" aria-label="delete">
-                              <Fab size="medium" aria-label="delete" color="secondary" className={classes.editDelete} onClick={() => this.handleDelete(val)}>
+                              <Fab size="small" aria-label="delete" color="secondary" className={classes.editDelete} onClick={() => this.handleDelete(val)}>
                                 <DeleteIcon/>
                               </Fab>
                             </Tooltip>
@@ -145,6 +158,20 @@ class List extends Component{
             )
           })
         }
+        <Modal
+          aria-labelledby="simple-modal-title"
+          aria-describedby="simple-modal-description"
+          open={this.state.open}
+          onClose={this.handleClose}
+          className={classes.modal}
+        >
+          <div className={classes.modalPaper}>
+            <h2 id="simple-modal-title">Text in a modal</h2>
+            <p id="simple-modal-description">
+              Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+            </p>
+          </div>
+        </Modal>
       </div>
     )
   }

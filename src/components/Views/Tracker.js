@@ -225,9 +225,6 @@ class Tracker extends Component{
               Activity List:
             </Typography>
             {
-              this.state.all.length === 0 ? <div>Empty.</div>: null
-            }
-            {
               this.state.all.map((val, index) => {
                 return(
                   <Paper className={classes.paper} key={index}>
@@ -238,7 +235,7 @@ class Tracker extends Component{
                       <Typography component="p" className={classes.hashtags}>
                         {val.tags.map(data => (data.value)).join(" ")}
                       </Typography>
-                      <Typography variant="subtitle2">
+                      <Typography variant="subtitle2" className={classes.date}>
                         {val.date}
                       </Typography>
                     </div>
