@@ -111,6 +111,7 @@ class Tracker extends Component{
         username: "user" //change when users are added
       }
       if(this.state.editKey === 0){
+        clone["date"] = clone["date"].toDateString();
         insert({
           link: "check_ins/", 
           data: clone
@@ -140,7 +141,7 @@ class Tracker extends Component{
     })
   }
 
-  handleEdit = (val, index) => {
+  handleEdit = (val) => {
     this.setState({
       date: val.date,
       hours: val.hours,
@@ -153,7 +154,7 @@ class Tracker extends Component{
     })
   }
 
-  handleDelete = (val, index) => {
+  handleDelete = (val) => {
     if(window.confirm("Delete this activity?")){
       remove({link: "check_ins/"+val.key})
       .then(()=>{this.forceUpdate()})
@@ -180,7 +181,7 @@ class Tracker extends Component{
             label="Date"
             format="MM/dd/yyyy"
             value={this.state.date}
-            onChange={e => this.setState({date: e.toDateString()})}
+            onChange={e => this.setState({date: e})}
             className={classes.dateField}
             autoOk
           />
@@ -224,6 +225,9 @@ class Tracker extends Component{
               Activity List:
             </Typography>
             {
+              this.state.all.length === 0 ? <div>Empty.</div>: null
+            }
+            {
               this.state.all.map((val, index) => {
                 return(
                   <Paper className={classes.paper} key={index}>
@@ -240,12 +244,12 @@ class Tracker extends Component{
                     </div>
                     <div className={classes.paperRightContainer}>
                       <Tooltip title="edit" aria-label="edit">
-                        <Fab size="medium" aria-label="edit" className={classes.editDelete} onClick={() => this.handleEdit(val, index)}>
+                        <Fab size="medium" aria-label="edit" className={classes.editDelete} onClick={() => this.handleEdit(val)}>
                           <EditIcon/>
                         </Fab>
                       </Tooltip>
                       <Tooltip title="delete" aria-label="delete">
-                        <Fab size="medium" aria-label="delete" color="secondary" className={classes.editDelete} onClick={() => this.handleDelete(val, index)}>
+                        <Fab size="medium" aria-label="delete" color="secondary" className={classes.editDelete} onClick={() => this.handleDelete(val)}>
                           <DeleteIcon/>
                         </Fab>
                       </Tooltip>
