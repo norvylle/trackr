@@ -2,13 +2,12 @@ import React, { Component } from "react";
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Typography, Tooltip, Fab, Modal } from "@material-ui/core";
-import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { update, remove, searchMulti, snapshotToArray} from '../../controller/';
 
 const styles = theme => ({
   panel: {
-    width: "500px",
+    width: "600px",
   },
   heading: {
     fontSize: theme.typography.pxToRem(15),
@@ -37,12 +36,12 @@ const styles = theme => ({
     color: "gray"
   },
   paperLeftContainer: {
-    width: "70%"
+    width: "80%"
   },
   paperRightContainer: {
-    width: "30%"
+    width: "20%"
   },
-  editDelete: {
+  delete: {
     marginRight: theme.spacing(1.5)
   },
   modal: {
@@ -80,14 +79,6 @@ class List extends Component{
     }).on("value",function(snapshot){
       this.setState({all: groupByDate(snapshotToArray(snapshot))})
     }.bind(this))
-  }
-
-  handleEdit = (val) => {
-    this.setState({open: true})
-  }
-
-  handleClose = () => {
-    this.setState({open: false})
   }
 
   handleDelete = (val) => {
@@ -138,13 +129,8 @@ class List extends Component{
                             </Typography>
                           </div>
                           <div className={classes.paperRightContainer}>
-                            <Tooltip title="edit" aria-label="edit">
-                              <Fab size="small" aria-label="edit" className={classes.editDelete} onClick={() => this.handleEdit(val)}>
-                                <EditIcon/>
-                              </Fab>
-                            </Tooltip>
                             <Tooltip title="delete" aria-label="delete">
-                              <Fab size="small" aria-label="delete" color="secondary" className={classes.editDelete} onClick={() => this.handleDelete(val)}>
+                              <Fab size="small" aria-label="delete" color="secondary" className={classes.delete} onClick={() => this.handleDelete(val)}>
                                 <DeleteIcon/>
                               </Fab>
                             </Tooltip>

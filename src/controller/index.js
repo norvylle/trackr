@@ -27,6 +27,11 @@ export function searchMulti(data){
   .equalTo(data.search)
 }
 
+export function searchAll(data){
+  return database.ref(data.link)
+  .orderByChild(data.child)
+}
+
 export function snapshotToArray(snapshot){
   var returnArr = [];
 
