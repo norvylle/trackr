@@ -6,6 +6,7 @@ import { TextField, Button, Paper, Typography, Fab, Tooltip } from "@material-ui
 import CreatableSelect from 'react-select/creatable';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { insert, update, remove, searchMulti, snapshotToArray } from '../../controller'
 
 const tags = [ {label:'#hello', value: '#hello'}, {label: '#world', value: '#world'}]
 
@@ -81,7 +82,8 @@ class Tracker extends Component{
       date: new Date(),
       hours: 0.1,
       tags: [],
-      activity: ""
+      activity: "",
+      editKey: 0
     }
   }
 
@@ -101,17 +103,28 @@ class Tracker extends Component{
 
   handleSubmit = () => {
     if(this.state.activity !== "" && this.state.tags.length > 0){
-      this.setState({
-        all: [
-          ...this.state.all, 
-          { 
-            date: this.state.date,
-            hours: this.state.hours,
-            tags: this.state.tags,
-            activity: this.state.activity
-          } 
-        ]
-      }, this.resetState)
+      let clone = {
+        date: this.state.date,
+        hours: this.state.hours,
+        tags: this.state.tags,
+        activity: this.state.activity,
+        username: "user" //change when users are added
+      }
+      if(this.state.editKey === 0){
+        insert({
+          link: "check_ins/", 
+          data: clone
+        }).once('value', (snapshot) => {
+          this.resetState()
+        })
+      }else{
+        update({
+          link: "check_ins/"+this.state.editKey,
+          data: clone
+        }).then(()=>{
+          this.resetState()
+        })
+      }
     }else{
       alert("Please fill in missing fields");
     }
@@ -122,7 +135,8 @@ class Tracker extends Component{
       date: new Date(),
       hours: 0.1,
       tags: [],
-      activity: ""
+      activity: "",
+      editKey: 0
     })
   }
 
@@ -131,18 +145,29 @@ class Tracker extends Component{
       date: val.date,
       hours: val.hours,
       tags: val.tags,
-      activity: val.activity
+      activity: val.activity,
+      editKey: val.key
     }, () => { 
-      this.state.all.splice(index,1) //delete action
-      this.forceUpdate()
+      remove({link: "check_ins/"+val.key})
+      .then(()=>{this.forceUpdate()})
     })
   }
 
   handleDelete = (val, index) => {
     if(window.confirm("Delete this activity?")){
-      this.state.all.splice(index,1) //delete action
-      this.forceUpdate()
+      remove({link: "check_ins/"+val.key})
+      .then(()=>{this.forceUpdate()})
     }
+  }
+
+  componentWillMount(){
+    searchMulti({
+      link: "check_ins/",
+      child: "username",
+      search: "user"
+    }).on("value",function(snapshot){
+      this.setState({all: snapshotToArray(snapshot)})
+    }.bind(this))
   }
 
   render(){
@@ -155,9 +180,8 @@ class Tracker extends Component{
             label="Date"
             format="MM/dd/yyyy"
             value={this.state.date}
-            onChange={e => this.setState({date: e})}
+            onChange={e => this.setState({date: e.toDateString()})}
             className={classes.dateField}
-            disableFuture
             autoOk
           />
           <TextField
@@ -211,7 +235,7 @@ class Tracker extends Component{
                         {val.tags.map(data => (data.value)).join(" ")}
                       </Typography>
                       <Typography variant="subtitle2">
-                        {val.date.toDateString()}
+                        {val.date}
                       </Typography>
                     </div>
                     <div className={classes.paperRightContainer}>
