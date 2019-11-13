@@ -13,7 +13,7 @@ function cloudTag(array){
   })
   return Object.keys(obj).map((val)=> {
     let total = obj[val].reduce((prev, current)=>{return { hours: parseFloat(prev.hours) + parseFloat(current.hours)} })
-    return {value: val, count: total.hours} 
+    return {value: val, count: total.hours.toFixed(2) } 
   })
   
 }

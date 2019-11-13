@@ -4,11 +4,8 @@ import PropTypes from 'prop-types';
 import { DatePicker } from '@material-ui/pickers';
 import { TextField, Button, Paper, Typography, Fab, Tooltip } from "@material-ui/core";
 import CreatableSelect from 'react-select/creatable';
-import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { insert, update, remove, searchMulti, snapshotToArray } from '../../controller'
-
-const tags = [ {label:'#hello', value: '#hello'}, {label: '#world', value: '#world'}]
+import { insert, remove, searchMulti, snapshotToArray, searchAll } from '../../controller'
 
 const styles = theme => ({
   paper: {
@@ -69,7 +66,7 @@ const styles = theme => ({
   paperRightContainer: {
     width: "20%"
   },
-  editDelete: {
+  delete: {
     marginRight: theme.spacing(1.5)
   }
 });
@@ -82,16 +79,17 @@ class Tracker extends Component{
       date: new Date(),
       hours: 0.1,
       tags: [],
-      activity: "",
-      editKey: 0
+      selector_tags: [],
+      activity: ""
     }
   }
 
   handleSelect = (newValue) => {
     if(newValue === null){
-      newValue = []
+      this.setState({tags: []})
+    }else{
+      this.setState({tags: [newValue]})
     }
-    this.setState({tags: newValue})
   };
 
   handleCreateOption = (label) => {
@@ -103,29 +101,18 @@ class Tracker extends Component{
 
   handleSubmit = () => {
     if(this.state.activity !== "" && this.state.tags.length > 0){
-      let clone = {
-        date: this.state.date,
-        hours: parseFloat(this.state.hours),
-        tag: this.state.tags[0].value,
-        activity: this.state.activity,
-        username: "user" //change when users are added
-      }
-      if(this.state.editKey === 0){
-        clone["date"] = clone["date"].toDateString();
-        insert({
-          link: "check_ins/", 
-          data: clone
-        }).once('value', (snapshot) => {
-          this.resetState()
-        })
-      }else{
-        update({
-          link: "check_ins/"+this.state.editKey,
-          data: clone
-        }).then(()=>{
-          this.resetState()
-        })
-      }
+      insert({
+        link: "check_ins/", 
+        data: {
+          date: this.state.date.toDateString(),
+          hours: parseFloat(this.state.hours),
+          tag: this.state.tags[0].value,
+          activity: this.state.activity,
+          username: "user" //change when users are added
+        }
+      }).once('value', (snapshot) => {
+        this.resetState()
+      })
     }else{
       alert("Please fill in missing fields");
     }
@@ -136,21 +123,7 @@ class Tracker extends Component{
       date: new Date(),
       hours: 0.1,
       tags: [],
-      activity: "",
-      editKey: 0
-    })
-  }
-
-  handleEdit = (val) => {
-    this.setState({
-      date: val.date,
-      hours: val.hours,
-      tags: [{label: val.tag, value: val.tag}, null],
-      activity: val.activity,
-      editKey: val.key
-    }, () => { 
-      remove({link: "check_ins/"+val.key})
-      .then(()=>{this.forceUpdate()})
+      activity: ""
     })
   }
 
@@ -168,6 +141,15 @@ class Tracker extends Component{
       search: "user"
     }).on("value",function(snapshot){
       this.setState({all: snapshotToArray(snapshot)})
+    }.bind(this))
+
+    searchAll({
+      link: "check_ins/",
+      child: "tag",
+    }).on("value",function(snapshot){
+      let arr =  new Set(snapshotToArray(snapshot).map((val)=>{return val.tag}))
+      arr = Array.from(arr).map((val)=>{return {label: val, value: val}})
+      this.setState({selector_tags: arr})
     }.bind(this))
   }
 
@@ -204,7 +186,7 @@ class Tracker extends Component{
             InputLabelProps={{
               shrink: true,
             }}
-            inputProps={{ maxLength: 45 }}
+            inputProps={{ maxLength: 40 }}
             value={this.state.activity}
             onChange={e => this.setState({activity: e.target.value})}
           />
@@ -212,11 +194,11 @@ class Tracker extends Component{
             isClearable
             value={this.state.tags}
             onChange={this.handleSelect}
-            options={tags}
+            options={this.state.selector_tags}
             onCreateOption={this.handleCreateOption}
             className={classes.selectField}
           />
-          <Button variant="contained" color="primary" className={classes.button} onClick={this.handleSubmit}>
+          <Button variant="contained" color="primaryarray map to objects" className={classes.button} onClick={this.handleSubmit}>
             Submit
           </Button>
         </div>
@@ -240,13 +222,8 @@ class Tracker extends Component{
                       </Typography>
                     </div>
                     <div className={classes.paperRightContainer}>
-                      <Tooltip title="edit" aria-label="edit">
-                        <Fab size="medium" aria-label="edit" className={classes.editDelete} onClick={() => this.handleEdit(val)}>
-                          <EditIcon/>
-                        </Fab>
-                      </Tooltip>
                       <Tooltip title="delete" aria-label="delete">
-                        <Fab size="medium" aria-label="delete" color="secondary" className={classes.editDelete} onClick={() => this.handleDelete(val)}>
+                        <Fab size="medium" aria-label="delete" color="secondary" className={classes.delete} onClick={() => this.handleDelete(val)}>
                           <DeleteIcon/>
                         </Fab>
                       </Tooltip>
