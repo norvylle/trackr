@@ -6,6 +6,7 @@ import { TextField, Button, Paper, Typography, Fab, Tooltip } from "@material-ui
 import CreatableSelect from 'react-select/creatable';
 import DeleteIcon from '@material-ui/icons/Delete';
 import { insert, remove, searchMulti, snapshotToArray, searchAll } from '../../controller'
+import { connect } from 'react-redux';
 
 const styles = theme => ({
   paper: {
@@ -108,7 +109,7 @@ class Tracker extends Component{
           hours: parseFloat(this.state.hours),
           tag: this.state.tags[0].value,
           activity: this.state.activity,
-          username: "user" //change when users are added
+          username: this.props.state.user.username
         }
       }).once('value', (snapshot) => {
         this.resetState()
@@ -138,7 +139,7 @@ class Tracker extends Component{
     searchMulti({
       link: "check_ins/",
       child: "username",
-      search: "user"
+      search: this.props.state.user.username
     }).on("value",function(snapshot){
       this.setState({all: snapshotToArray(snapshot)})
     }.bind(this))
@@ -242,4 +243,10 @@ Tracker.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Tracker);
+const mapStateToProps = state => {
+  return state
+}
+
+const TrackerPage = connect(mapStateToProps)(Tracker)
+
+export default withStyles(styles)(TrackerPage);

@@ -76,7 +76,7 @@ class List extends Component{
     searchMulti({
       link: "check_ins/",
       child: "username",
-      search: "user"
+      search: this.props.state.user.username
     }).on("value",function(snapshot){
       this.setState({all: groupByDate(snapshotToArray(snapshot))})
     }.bind(this))
