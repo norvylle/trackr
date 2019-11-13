@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -13,6 +12,9 @@ import HistoryOutlinedIcon from '@material-ui/icons/HistoryOutlined';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { login, searchMulti, snapshotToArray } from '../../controller'
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 
 const styles = theme => ({
   '@global': {
@@ -49,16 +51,33 @@ class Login extends Component {
   }
 
   handleSubmit = () =>{
-    //change for auth
-    // if(this.state.username === "user"){
-      this.props.history.push("/");
-    // }else{
-    //   alert("Nope")
-    // }
+    if(this.state.username === "" || this.state.password === ""){
+      alert("Please fill in the missing fields.");
+    }else{
+      searchMulti({
+        link: "users/",
+        child: "username",
+        search: this.state.username
+      }).once('value',function(snapshot){
+        if(snapshot.exists()){
+          let record = snapshotToArray(snapshot)[0];
+          if(this.state.password === record.password){
+            this.props.dispatch(login(record))
+          }else{
+            alert("Password Incorrect.")
+          }
+        }else{
+          alert("User account doesn't exist.")
+        }
+      }.bind(this))
+    }
   }
 
   render(){
     const { classes } = this.props;
+    if(this.props.state.user !== null){
+      return <Redirect to='/'  />
+    }
     return (
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -104,7 +123,7 @@ class Login extends Component {
               variant="contained"
               color="primary"
               className={classes.submit}
-              onClick={this.handleSubmit}
+              onClick={()=>{this.handleSubmit()}}
             >
               Sign In
             </Button>
@@ -126,4 +145,10 @@ Login.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Login);
+const mapStateToProps = state => {
+  return state
+}
+
+const LoginPage = connect(mapStateToProps)(Login)
+
+export default withStyles(styles)(LoginPage);

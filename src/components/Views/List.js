@@ -3,7 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Typography, Tooltip, Fab, Modal } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
-import { update, remove, searchMulti, snapshotToArray} from '../../controller/';
+import { remove, searchMulti, snapshotToArray} from '../../controller/';
 
 const styles = theme => ({
   panel: {

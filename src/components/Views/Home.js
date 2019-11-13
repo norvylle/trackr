@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router,Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -10,6 +10,8 @@ import Tracker from './Tracker';
 import List from './List';
 import Report from './Report';
 import { Link } from '@material-ui/core';
+import { logout } from '../../controller'
+import { connect } from 'react-redux';
 
 const styles = theme => ({
   root: {
@@ -40,11 +42,15 @@ const styles = theme => ({
 
 class Home extends Component{
   
+  handleLogout(){
+    this.props.dispatch(logout())
+  }
+
   render(){
     const { classes } = this.props;
-    // if(false){
-    //   return <Redirect to='/login'  />
-    // }
+    if(this.props.state.user === null){
+      return <Redirect to='/login'  />
+    }
     return (
       <div className={classes.root}>
         <CssBaseline />
@@ -71,7 +77,7 @@ class Home extends Component{
                 Report
               </Typography>
             </Link>
-            <Link href="/login" color="inherit">
+            <Link href="#" color="inherit" onClick={()=>{this.handleLogout()}}>
               <Typography variant="subtitle1" className={classes.toolbars}>
                 Sign out
               </Typography>
@@ -97,4 +103,10 @@ Home.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(Home);
+const mapStateToProps = state => {
+  return state
+}
+
+const HomePage = connect(mapStateToProps)(Home)
+
+export default withStyles(styles)(HomePage);

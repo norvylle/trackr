@@ -1,9 +1,9 @@
 import * as firebase from 'firebase';
-
+import { combineReducers } from 'redux';
+// Firebase
 const firebaseConfig = require("./secrets");
 
 firebase.initializeApp(firebaseConfig);
-
 const database = firebase.database();
 
 export function insert(data){
@@ -44,3 +44,33 @@ export function snapshotToArray(snapshot){
 
   return returnArr;
 };
+
+// Redux
+const LOGIN = 'USER LOGIN';
+const LOGOUT = 'USER LOGOUT';
+
+const initialState = {
+  user: null
+}
+
+export function login(user){
+  return {type: LOGIN, user}
+}
+
+export function logout(){
+  return {type: LOGOUT}
+}
+
+function dispatcher(state, action){
+  switch(action.type){
+    case LOGIN:
+      return Object.assign({}, state, {
+        user: action.user
+      });
+    case LOGOUT:
+    default:
+      return initialState;
+  }
+}
+
+export const reducer = combineReducers({state: dispatcher});
