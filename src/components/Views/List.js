@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { ExpansionPanel, ExpansionPanelSummary, ExpansionPanelDetails, Paper, Typography, Tooltip, Fab, Modal } from "@material-ui/core";
 import DeleteIcon from '@material-ui/icons/Delete';
 import { remove, searchMulti, snapshotToArray} from '../../controller/';
+import { connect } from 'react-redux';
 
 const styles = theme => ({
   panel: {
@@ -90,13 +91,7 @@ class List extends Component{
 
   render(){
     const { classes } = this.props;
-    // if(Object.entries(this.state.all).length === 0 && this.state.all.constructor === Object){
-    //   return(
-    //     <div>
-    //       Empty.
-    //     </div>
-    //   )
-    // }
+    
     return(
       <div>
         <Typography variant="h4" style={{ marginBottom: "2rem"}}>
@@ -167,4 +162,10 @@ List.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(List);
+const mapStateToProps = state => {
+  return state
+}
+
+const ListPage = connect(mapStateToProps)(List)
+
+export default withStyles(styles)(ListPage);
